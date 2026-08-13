@@ -1,0 +1,40 @@
+{
+  "q_table": {
+    "search=True|doc=False|len=medium": {
+      "Direct": 0.0,
+      "Web Search": 0.0,
+      "RAG Document Search": 0.0,
+      "Hybrid": 0.0
+    },
+    "search=True|doc=True|len=medium": {
+      "Direct": 0.0,
+      "Web Search": 0.0,
+      "RAG Document Search": 0.0,
+      "Hybrid": 0.0
+    },
+    "search=True|doc=True|len=long": {
+      "Direct": 0.2,
+      "Web Search": 0.0,
+      "RAG Document Search": 0.0,
+      "Hybrid": 0.0
+    }
+  },
+  "action_counts": {
+    "Direct": 1,
+    "Web Search": 1,
+    "RAG Document Search": 0,
+    "Hybrid": 0
+  },
+  "reward_history": [
+    {
+      "interaction": 2,
+      "state": "search=True|doc=True|len=long",
+      "action": "Direct",
+      "reward": 1.0,
+      "old_q": 0.0,
+      "new_q": 0.2
+    }
+  ],
+  "total_reward": 1.0,
+  "total_interactions": 2
+}

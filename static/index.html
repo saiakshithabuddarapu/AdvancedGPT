@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT AI - RL & Tools Enabled</title>
+  
+  <!-- Google Fonts & FontAwesome / Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="new-chat-btn" id="newChatBtn">
+          <i class="fa-solid fa-plus"></i> New Chat
+        </button>
+      </div>
+
+      <!-- Chat Sessions List -->
+      <div class="sidebar-section">
+        <div class="sidebar-title"><i class="fa-solid fa-comments"></i> Chat History</div>
+        <div class="session-list" id="sessionList">
+          <!-- Session items dynamically injected -->
+        </div>
+      </div>
+
+      <!-- RAG Documents Section -->
+      <div class="sidebar-section rag-section">
+        <div class="sidebar-title"><i class="fa-solid fa-file-lines"></i> Knowledge Base (RAG)</div>
+        <div class="upload-dropzone" id="uploadDropzone">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Upload PDF/TXT/MD/JSON</span>
+          <input type="file" id="fileInput" accept=".pdf,.txt,.md,.json,.csv" hidden />
+        </div>
+        <div class="doc-list" id="docList">
+          <!-- Document list dynamically injected -->
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="info">
+            <span class="name">ChatGPT Assistant</span>
+            <span class="status"><i class="fa-solid fa-circle online-dot"></i> RL & Tools Active</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Content -->
+    <main class="chat-main">
+      
+      <!-- Top Header -->
+      <header class="chat-header">
+        <div class="header-left">
+          <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+          <div class="model-badge">
+            <i class="fa-solid fa-bolt"></i> Claude 3.5 / Anthropic API
+          </div>
+        </div>
+
+        <div class="header-center">
+          <div class="strategy-selector">
+            <label for="actionStrategy"><i class="fa-solid fa-sliders"></i> Strategy Mode:</label>
+            <select id="actionStrategy">
+              <option value="">🧠 Auto (RL Contextual Bandit Agent)</option>
+              <option value="Direct">⚡ Direct LLM</option>
+              <option value="Web Search">🌐 Web Search Tool</option>
+              <option value="RAG Document Search">📄 RAG Document Search</option>
+              <option value="Hybrid">🔀 Hybrid (Web + RAG)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="rl-dashboard-btn" id="toggleRlDashboard">
+            <i class="fa-solid fa-brain"></i> RL Dashboard
+          </button>
+        </div>
+      </header>
+
+      <!-- Messages Stream Area -->
+      <div class="messages-container" id="messagesContainer">
+        <!-- Hero / Empty State -->
+        <div class="hero-welcome" id="heroWelcome">
+          <div class="hero-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <h1>What can I help with today?</h1>
+          <p>ChatGPT with background Reinforcement Learning, live Web Search, and RAG document intelligence.</p>
+          
+          <div class="suggestion-grid">
+            <div class="suggestion-card" onclick="sendSuggested('Search the latest tech developments in AI')">
+              <i class="fa-solid fa-globe"></i>
+              <div class="title">Latest AI News</div>
+              <div class="desc">Search recent web updates & findings</div>
+            </div>
+            <div class="suggestion-card" onclick="sendSuggested('How does the background RL agent choose tools?')">
+              <i class="fa-solid fa-brain"></i>
+              <div class="title">RL Tool Policy</div>
+              <div class="desc">Learn how Q-learning optimizes tool use</div>
+            </div>
+            <div class="suggestion-card" onclick="sendSuggested('Summarize key points from my uploaded documents')">
+              <i class="fa-solid fa-file-contract"></i>
+              <div class="title">RAG Search</div>
+              <div class="desc">Retrieve knowledge from your uploaded files</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="message-feed" id="messageFeed"></div>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="chat-input-wrapper">
+        <div class="chat-input-box">
+          <button class="attach-btn" title="Upload Document for RAG" onclick="document.getElementById('fileInput').click()">
+            <i class="fa-solid fa-paperclip"></i>
+          </button>
+          <textarea id="chatInput" placeholder="Message ChatGPT... (Shift+Enter for newline)" rows="1"></textarea>
+          <button class="send-btn" id="sendBtn">
+            <i class="fa-solid fa-arrow-up"></i>
+          </button>
+        </div>
+        <div class="input-footer-note">
+          <i class="fa-solid fa-shield-halved"></i> Background RL learns from your 👍/👎 feedback to automatically optimize tool policies.
+        </div>
+      </div>
+    </main>
+
+    <!-- RL Intelligence Analytics Panel (Drawer/Modal) -->
+    <div class="rl-drawer-overlay" id="rlDrawerOverlay"></div>
+    <aside class="rl-drawer" id="rlDrawer">
+      <div class="drawer-header">
+        <h2><i class="fa-solid fa-brain"></i> Reinforcement Learning Intelligence</h2>
+        <button class="close-drawer-btn" id="closeRlDrawer"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="drawer-content" id="rlDrawerContent">
+        <!-- Overview Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="statInteractions">0</div>
+            <div class="stat-label">Total Interactions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statReward">0.0</div>
+            <div class="stat-label">Cumulative Reward</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statAvgReward">0.0%</div>
+            <div class="stat-label">Avg Satisfaction</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statEpsilon">15%</div>
+            <div class="stat-label">Exploration Rate (ε)</div>
+          </div>
+        </div>
+
+        <!-- Q-Table Action Values -->
+        <div class="drawer-section">
+          <h3><i class="fa-solid fa-chart-bar"></i> Learned Action-Value Estimates ($Q(s, a)$)</h3>
+          <div class="q-value-bars" id="qValueBars">
+            <!-- Progress bars injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Tool Usage Distribution -->
+        <div class="drawer-section">
+          <h3><i class="fa-solid fa-pie-chart"></i> Tool Selection Frequency</h3>
+          <div class="action-count-list" id="actionCountList">
+            <!-- Action counts injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Feedback & Reward History Stream -->
+        <div class="drawer-section">
+          <h3><i class="fa-solid fa-list-check"></i> Recent RL Reward Updates</h3>
+          <div class="reward-history-log" id="rewardHistoryLog">
+            <!-- Logs injected dynamically -->
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
